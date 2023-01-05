@@ -24,6 +24,11 @@ markdownView.addEventListener('keyup', async (event) => {
     const currentContent = event.target.value;
     htmlView.innerHTML = DOMPurify
         .sanitize(await window.api.renderMarkdownToHtml(currentContent))
+    if(originalContent !== currentContent) {
+        window.api.openedFileIsEdited(true)
+    } else {
+        window.api.openedFileIsEdited(false)
+    }
 })
 
 openFileBtn.addEventListener('click', async () => {

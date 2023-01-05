@@ -28,15 +28,42 @@ const getFileFromUser = async() => {
 
     // change the UI
     if(content) {
-        let currentWindow = BrowserWindow.getAllWindows()
+        // let currentWindow = BrowserWindow.getAllWindows()
+        const currentWindow = getCurrentWindow();
         currentWindow[0].webContents.send('file-opened', files.filePaths[0] ,content);
         
         // set window title
         if(currentWindow[0].title) {
-            currentWindow[0].setTitle('Fire Sale');
+            // currentWindow[0].setTitle('Fire Sale');
+            setWindowTitle(currentWindow[0], "Fire Sale")
         }
-        currentWindow[0].setTitle(`${currentWindow[0].title} (${fileName})`)
+        // currentWindow[0].setTitle(`${currentWindow[0].title} (${fileName})`)
+        setWindowTitle(currentWindow[0], `${currentWindow[0].title} (${fileName})`);
         return content;
+    }
+}
+
+const getCurrentWindow = () => {
+    let currentWindow = BrowserWindow.getAllWindows();
+    return currentWindow;
+}
+
+const setWindowTitle = (windowRef, title) => {
+    windowRef.setTitle(title);
+    
+}
+
+const toggleEdited = (event, isEdited) => {
+    const [ currentWindow ] = BrowserWindow.getAllWindows();
+    const isEditInclude = currentWindow.title.split(' ').includes('(edited)');
+    if(isEdited) {
+        if(!isEditInclude) {
+            currentWindow.setTitle(`${currentWindow.title} (edited)`)
+        }
+    } else {
+        const titleSplitted = currentWindow.title.split(' ');
+        titleSplitted.splice([titleSplitted.length - 1], 1);
+        currentWindow.setTitle(titleSplitted.join(' '));
     }
 }
 
@@ -90,6 +117,7 @@ app.whenReady().then(() => {
     })
     ipcMain.handle('get-file-from-user', getFileFromUser);
     ipcMain.handle('create-new-window', createNewWindow);
+    ipcMain.handle('file-is-edited', toggleEdited)
 
 })
 
