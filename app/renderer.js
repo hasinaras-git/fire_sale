@@ -11,8 +11,25 @@ const openInDefaultBtn = document.querySelector('#open-in-default');
 let filePath = null;
 let originalContent = '';
 
+window.api.restoreCurrentContent(async(event, content) => {
+    htmlView.innerHTML = content;
+})
+
+saveHtmlBtn.disabled = true;
+
+saveMarkedDownBtn.addEventListener('click', async() => {
+    await window.api.saveMarkdown(filePath, markdownView.value)
+})
+
+saveHtmlBtn.addEventListener('click', (event) => {
+    window.api.saveHtml(htmlView.innerHTML);
+    const currentContent = htmlView.innerHTML;
+    htmlView.innerHTML = currentContent;
+})
+
+
 window.api.openedFile(async(event, file, content) => {
-    // filePath = file;
+    filePath = file;
     originalContent = content;
 
     markdownView.value = content;
@@ -25,15 +42,17 @@ markdownView.addEventListener('keyup', async (event) => {
     htmlView.innerHTML = DOMPurify
         .sanitize(await window.api.renderMarkdownToHtml(currentContent))
     if(originalContent !== currentContent) {
-        window.api.openedFileIsEdited(true)
+        await window.api.openedFileIsEdited(true)
+        saveHtmlBtn.disabled = false;
     } else {
-        window.api.openedFileIsEdited(false)
+        await window.api.openedFileIsEdited(false)
+        saveHtmlBtn.disabled = true;
     }
 })
 
 openFileBtn.addEventListener('click', async () => {
     const content = await window.api.getFileFromUser();
-    // console.log(filePath);
+    // console.log(content);
     if (content) {
         htmlView.innerHTML = DOMPurify
             .sanitize(await window.api.renderMarkdownToHtml(content))
