@@ -62,3 +62,44 @@ openFileBtn.addEventListener('click', async () => {
 newFileBtn.addEventListener('click', () => {
     window.api.createNewWindow();
 })
+
+// implementing drag and drop
+document.addEventListener('dragstart', (event) => {
+    event.preventDefault()
+})
+
+document.addEventListener('dragover', (event) => {
+    event.preventDefault()
+})
+
+document.addEventListener('dragleave', (event) => {
+    event.preventDefault()
+})
+
+document.addEventListener('drop', (event) => {
+    event.preventDefault()
+})
+
+const getDraggedFile = (event) => {
+    return event.dataTransfer.items[0]
+}
+
+const getDroppedFile = (event) => {
+    return event.dataTransfer.files[0]
+}
+
+const fileTypeIsSupported = (file) => {
+    return [ 'text/plain', 'text/markdown' ].includes(file.type)
+}
+
+// event listener for drag and drop
+markdownView.addEventListener('dragover', (event) => {
+    event.preventDefault();
+    console.log(event)
+    const file = getDraggedFile(event)
+    // if(fileTypeIsSupported(file)) {
+    //     console.log('supported')
+    // } else {
+    //     console.log('not supported')
+    // }
+})
