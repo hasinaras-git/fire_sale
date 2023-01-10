@@ -3,6 +3,7 @@ const path = require('path');
 const { marked } = require('marked');
 const fsPromise = require('fs/promises');
 const { basename } = require('path');
+const menu = require('./app-menu');
 
 const renderMarkdownToHtml = (markdown) => {
     // return marked(markdown, { sanitize: true })
@@ -63,7 +64,7 @@ const saveFileFromUser = async(event, content) => {
     toggleEdited(null, false);
 }
 
-const getFileFromUser = async() => {
+const getFileFromUser = async(event) => {
     const files = await dialog.showOpenDialog({
         properties: [ 'openFile' ],
         filters: [
@@ -175,26 +176,6 @@ let createNewWindow = () => {
 
     newWindow.on('focus', () => console.log('newWindow is focused'))
 }
-
-const template = [
-    {
-        label: 'recent file',
-        submenu: [
-            {
-                label: "Open recent",
-                role: "recentdocuments",
-                submenu: [
-                    {
-                        label: "Clear Recent",
-                        role: "clearrecentdocuments"
-                    }
-                ]
-            }
-        ]
-    }
-]
-
-const menu = Menu.buildFromTemplate(template);
 
 
 app.whenReady().then(() => {

@@ -64,42 +64,42 @@ newFileBtn.addEventListener('click', () => {
 })
 
 // implementing drag and drop
-document.addEventListener('dragstart', (event) => {
+
+document.addEventListener('dragover', event => {
     event.preventDefault()
+    event.stopPropagation()
 })
-
-document.addEventListener('dragover', (event) => {
+document.addEventListener('dragstart', event => {
     event.preventDefault()
+    event.stopPropagation()
 })
-
-document.addEventListener('dragleave', (event) => {
+document.addEventListener('drop', event => {
     event.preventDefault()
+    event.stopPropagation()
 })
-
-document.addEventListener('drop', (event) => {
-    event.preventDefault()
-})
-
-const getDraggedFile = (event) => {
-    return event.dataTransfer.items[0]
-}
-
-const getDroppedFile = (event) => {
-    return event.dataTransfer.files[0]
-}
-
-const fileTypeIsSupported = (file) => {
-    return [ 'text/plain', 'text/markdown' ].includes(file.type)
-}
-
-// event listener for drag and drop
-markdownView.addEventListener('dragover', (event) => {
+markdownView.addEventListener('dragstart', event => {
+    
     event.preventDefault();
-    console.log(event)
-    const file = getDraggedFile(event)
-    // if(fileTypeIsSupported(file)) {
-    //     console.log('supported')
-    // } else {
-    //     console.log('not supported')
-    // }
+    event.stopPropagation()
+    console.log(event.dataTransfer)
+    markdownView.classList.add('drag-over')
+
+
 })
+
+markdownView.addEventListener('drop', async(e) => {
+    e.preventDefault();
+    console.log(e.dataTransfer.files[0])
+    if(fileTypeSupported(e.dataTransfer.files[0])) {
+        markdownView.classList.remove('drag-over');
+        await window.api.getFileFromUser();
+    } else {
+        
+    }
+    e.stopPropagation()
+})
+
+const fileTypeSupported = (file) =>  {
+    const fileType = file.type;
+    return [ 'text/plain', 'text/markdown' ].includes(fileType)
+}
